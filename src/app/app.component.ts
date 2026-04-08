@@ -1,4 +1,5 @@
 import { Component, signal } from '@angular/core';
+import { Task } from './tasks.model';
 
 @Component({
   selector: 'app-root',
@@ -7,7 +8,7 @@ import { Component, signal } from '@angular/core';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  tasks = signal<string[]>([]);
+  tasks = signal<Task[]>([]);
   newTask = signal('');
 
   onInput(event: Event) {
@@ -20,12 +21,30 @@ export class AppComponent {
 
     if (!title) return;
 
-    this.tasks.update((t) => [...t, this.newTask()]);
+    this.tasks.update((t) => [
+      ...t,
+      {
+        id: Date.now(),
+        title: this.newTask(),
+        status: false,
+      },
+    ]);
 
     this.newTask.set('');
   }
 
-  removeTask(index: number) {
-    this.tasks.update((t) => t.filter((_, i) => i !== index));
+  removeTask(id: number) {
+    this.tasks.update((t) => t.filter((task) => task.id !== id));
+  }
+
+  taskStatusChange(id: number) {
+    this.tasks.update((t) =>
+      t.map((task) => {
+        if (task.id === id) {
+          return { ...task, status: !task.status };
+        }
+        return task;
+      }),
+    );
   }
 }

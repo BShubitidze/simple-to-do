@@ -2,9 +2,12 @@
 <input [value]="newTask()" (input)="onInput($event)" id="task" type="text" />
 <button (click)="addTaks()">Add</button>
 
-@for (task of tasks(); track $index; let i = $index) {
+@for (task of tasks(); track task.id) {
   <div>
-    <p>{{ task }}</p>
-    <button (click)="removeTask(i)">Remove</button>
+    <p>{{ task.title }}</p>
+    <button (click)="taskStatusChange(task.id)">
+      {{ task.status ? "Done" : "Not Done" }}
+    </button>
+    <button (click)="removeTask(task.id)">Remove</button>
   </div>
 }
